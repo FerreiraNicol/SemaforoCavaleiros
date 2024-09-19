@@ -2,12 +2,13 @@ package controller;
 
 import java.util.concurrent.Semaphore;
 
-public class Threadcontroller extends Thread{
+public class ThreadCarro extends Thread{
 	private static int[] tocha = new int[1], pedra = new int[1], portas = {2, 1, 2, 2};
-	private int tid, passo, tot, dist = 500,i, nump;
+	private int tid, passo, tot, dist = 500, nump;
 	private Semaphore semaforo;
+        private Semaphore semaforotocha = new Semaphore(1), semaforopedra = new Semaphore(1);
 	
-	public Threadcontroller(int tid, Semaphore semaforo) {
+	public ThreadCarro(int tid, Semaphore semaforo) {
 		this.tid = tid;
 		this.semaforo = semaforo;
 	}
@@ -31,12 +32,29 @@ public class Threadcontroller extends Thread{
 				passo += 2;
 			}
 			if(tot >= 100 && tocha[0] == 0) {
-				tocha[i] = tid;
-				System.out.println("O cavaleiro "+tid+" pegou a tocha.");
+                                try{
+                                    semaforotocha.acquire();
+									if(tot >= 100 && tocha[0] == 0) {
+                                    	tocha();
+									}
+                                }catch(Exception e1){
+                                    e1.printStackTrace();
+                                }finally{
+                                    semaforotocha.release();
+                                }
 			}
 			if(tot >= 250 && pedra[0] == 0 && tocha[0] != tid) {
-				pedra[i] = tid;
-				System.out.println("O cavaleiro "+tid+" pegou a pedra.");
+                                try{
+                                    semaforopedra.acquire();
+									if(tot >= 250 && pedra[0] == 0 && tocha[0] != tid) {
+                                    	pedra[0] = tid;
+				    					System.out.println("O cavaleiro "+tid+" pegou a pedra.");
+									}
+                                }catch(Exception e1){
+                                    e1.printStackTrace();
+                                }finally{
+                                    semaforopedra.release();
+                                }
 			}
 			if(pedra[0] == tid) {
 				passo +=2;
@@ -76,4 +94,9 @@ public class Threadcontroller extends Thread{
 		}
 		
 	}
+        
+        public void tocha(){
+            tocha[0] = tid;
+            System.out.println("O cavaleiro "+tid+" pegou a tocha.");
+        }
 }
