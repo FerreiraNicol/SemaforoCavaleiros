@@ -12,7 +12,8 @@ public class ThreadCarro extends Thread{
 		this.tid = tid;
 		this.semaforo = semaforo;
 	}
-	
+
+	@Override
 	public void run() {
 		percurso();
 		try {
@@ -74,7 +75,7 @@ public class ThreadCarro extends Thread{
 		System.out.println("O cavaleiro "+tid+" finalizou o túnel e chegou às portas.");
 	}
 	
-	public void portas() {
+	private void portas() {
 		boolean por = true;
 		while(por == true) {
 			nump = (int)(Math.random() * 4);
@@ -95,7 +96,7 @@ public class ThreadCarro extends Thread{
 		
 	}
         
-        public void tocha(){
+        private void tocha(){
             tocha[0] = tid;
             System.out.println("O cavaleiro "+tid+" pegou a tocha.");
         }
